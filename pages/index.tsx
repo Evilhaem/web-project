@@ -25,7 +25,6 @@ const Home = () => {
     
     useEffect(() => {
         workerRef.current = createWorker({
-            langPath: '..',
             logger: message => {
                 if ('progress' in message) {
                 setProgress(message.progress);
