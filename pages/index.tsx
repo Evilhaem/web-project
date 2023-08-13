@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Group, Stack, Text, Image, Progress, Button, Code, Skeleton,} from '@mantine/core';
+import { NativeSelect, Group, Stack, Text, Image, Progress, Button, Code, Skeleton,} from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { createWorker } from 'tesseract.js';
 
 const Home = () => {
+    const [lang, setValue] = useState('eng');
     const [loading, setLoading] = useState(false);
   const [imageData, setImageData] = useState<null | string>(null);
   const clipboard = useClipboard({ timeout: 2500 });
@@ -44,8 +45,8 @@ const Home = () => {
 
     const worker = workerRef.current!;
     await worker.load();
-    await worker.loadLanguage('eng');
-    await worker.initialize('eng');
+    await worker.loadLanguage(lang);
+    await worker.initialize(lang);
     
     const response = await worker.recognize(imageData!);
     setOcrResult(response.data.text);
@@ -65,6 +66,12 @@ const Home = () => {
             Drag image here or click to select file
           </Text>
         )}</Dropzone>
+        <NativeSelect
+      value={lang}
+      onChange={(event) => setValue(event.currentTarget.value)}
+      data={['eng', 'mon']} 
+      label="Language"
+    />
         <Button disabled={!imageData || !workerRef.current} onClick={handleExtract}>Extract</Button>
         <Progress value={progress * 100}/>
         <Code style={{ textAlign: 'center', fontFamily: 'inherit'}}>{progressLabel.toLowerCase()}</Code>
